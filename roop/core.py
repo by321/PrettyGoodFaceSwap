@@ -11,7 +11,6 @@ import warnings
 from typing import List
 import platform
 import signal
-import torch
 import onnxruntime
 import pathlib
 
@@ -23,7 +22,6 @@ import roop.utilities as util
 import roop.util_ffmpeg as ffmpeg
 import ui.main as main
 from settings import Settings
-from roop.face_util import extract_face_images
 from roop.ProcessEntry import ProcessEntry
 from roop.ProcessMgr import ProcessMgr
 from roop.ProcessOptions import ProcessOptions
@@ -95,7 +93,6 @@ def limit_resources() -> None:
             resource.setrlimit(resource.RLIMIT_DATA, (memory, memory))
 
 
-
 def release_resources() -> None:
     import gc
     global process_mgr
@@ -131,6 +128,7 @@ def pre_check() -> bool:
        update_status('ffmpeg is not installed.')
     return True
 
+
 def set_display_ui(function):
     global call_display_ui
 
@@ -143,8 +141,6 @@ def update_status(message: str) -> None:
     print(message)
     if call_display_ui is not None:
         call_display_ui(message)
-
-
 
 
 def start() -> None:
@@ -206,9 +202,6 @@ def preview_mask(frame, clip_text):
     return process_mgr.process_mask(maskprocessor, frame, maskimage)
     
 
-
-
-
 def batch_process(files:list[ProcessEntry], use_clip, new_clip_text, use_new_method, progress) -> None:
     global clip_text, process_mgr
 
@@ -226,7 +219,6 @@ def batch_process(files:list[ProcessEntry], use_clip, new_clip_text, use_new_met
            
     update_status('Sorting videos/images')
 
-
     for index, f in enumerate(files):
         fullname = f.filename
         if util.has_image_extension(fullname):
@@ -240,7 +232,6 @@ def batch_process(files:list[ProcessEntry], use_clip, new_clip_text, use_new_met
             destination = util.get_destfilename_from_path(fullname, roop.globals.output_path, f'__temp.{roop.globals.CFG.output_video_format}')
             f.finalname = destination
             videofiles.append(f)
-
 
     if process_mgr is None:
         process_mgr = ProcessMgr(progress)
